@@ -1,15 +1,16 @@
 import sqlite3
 
+
 class Database:
     def __init__(self):
-        self.conn = sqlite3.connect('students.db')
+        self.conn = sqlite3.connect("students.db")
         self.cursor = self.conn.cursor()
 
         self.create_tables()
 
     def create_tables(self):
         self.cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS users(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
             password TEXT,
@@ -18,7 +19,7 @@ class Database:
         """)
 
         self.cursor.execute("""
-        CREATE TABLE IF NOT EXISTS students (
+        CREATE TABLE IF NOT EXISTS students(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
             coffee INTEGER DEFAULT 0,
@@ -26,21 +27,25 @@ class Database:
             bugs INTEGER DEFAULT 5,
             xp INTEGER DEFAULT 0,
             level INTEGER DEFAULT 1,
-            salary INTEGER DEFAULT 400
+            salary INTEGER DEFAULT 500
         )
         """)
+
+        self.conn.commit()
 
     def register_user(self, username, password, role):
         try:
             self.cursor.execute(
                 """
-                INSERT INTO users (username, password, role)
-                VALUES (?, ?, ?)
+                INSERT INTO users(username,password,role)
+                VALUES(?,?,?)
                 """,
                 (username, password, role)
             )
+
             self.conn.commit()
             return True
+
         except:
             return False
 
@@ -48,7 +53,7 @@ class Database:
         self.cursor.execute(
             """
             SELECT * FROM users
-            WHERE username=? and password=?
+            WHERE username=? AND password=?
             """,
             (username, password)
         )
@@ -59,9 +64,9 @@ class Database:
         self.cursor.execute(
             """
             INSERT INTO students(name)
-            VALUES (?)
+            VALUES(?)
             """,
-            (name)
+            (name,)
         )
         self.conn.commit()
 
@@ -79,36 +84,41 @@ class Database:
             SELECT * FROM students
             WHERE name LIKE ?
             """,
-            (f"%{name}%")
+            (f"%{name}%",)
         )
+
+        return self.cursor.fetchall()
 
     def delete_student(self, student_id):
         self.cursor.execute(
             """
             DELETE FROM students
-            WHERE id = ?
+            WHERE id=?
             """,
             (student_id,)
         )
+
         self.conn.commit()
 
     def update_student(self, student_id, field, value):
         self.cursor.execute(
             f"""
             UPDATE students
-            SET {field} = ?
-            WHERE id = ?
+            SET {field}=?
+            WHERE id=?
             """,
             (value, student_id)
         )
+
         self.conn.commit()
 
     def get_student(self, student_id):
         self.cursor.execute(
             """
             SELECT * FROM students
-            WHERE id = ?
+            WHERE id=?
             """,
             (student_id,)
         )
+
         return self.cursor.fetchone()

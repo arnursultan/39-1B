@@ -2,9 +2,9 @@ from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QLineEdit,
+    QPushButton,
     QLabel,
-    QMessageBox,
-    QPushButton
+    QMessageBox
 )
 
 from PyQt6.QtCore import QPropertyAnimation
@@ -12,13 +12,15 @@ from PyQt6.QtCore import QPropertyAnimation
 from register_window import RegisterWindow
 from dashboard_window import DashboardWindow
 
+
 class LoginWindow(QWidget):
+
     def __init__(self, db):
         super().__init__()
 
         self.db = db
 
-        self.setWindowTitle("Backend Login")
+        self.setWindowTitle("Backend Simulator Login")
         self.resize(400, 300)
 
         self.init_ui()
@@ -27,7 +29,7 @@ class LoginWindow(QWidget):
     def init_ui(self):
         layout = QVBoxLayout()
 
-        title = QLabel("🔐 Backend Login")
+        title = QLabel("🔐 Backend Simulator")
         title.setStyleSheet("font-size:22px;")
 
         self.username = QLineEdit()
@@ -35,7 +37,9 @@ class LoginWindow(QWidget):
 
         self.password = QLineEdit()
         self.password.setPlaceholderText("Пароль")
-        self.password.setEchoMode(QLineEdit.EchoMode.Password)
+        self.password.setEchoMode(
+            QLineEdit.EchoMode.Password
+        )
 
         self.login_btn = QPushButton("Войти")
         self.register_btn = QPushButton("Регистрация")
@@ -48,11 +52,19 @@ class LoginWindow(QWidget):
 
         self.setLayout(layout)
 
-        self.login_btn.clicked.connect(self.login)
-        self.register_btn.clicked.connect(self.open_register)
+        self.login_btn.clicked.connect(
+            self.login
+        )
+
+        self.register_btn.clicked.connect(
+            self.open_register
+        )
 
     def animate(self):
-        self.anim = QPropertyAnimation(self, b"windowOpacity")
+        self.anim = QPropertyAnimation(
+            self,
+            b"windowOpacity"
+        )
 
         self.anim.setDuration(800)
         self.anim.setStartValue(0)
@@ -63,15 +75,30 @@ class LoginWindow(QWidget):
         username = self.username.text()
         password = self.password.text()
 
-        user = self.db.login_user(username, password)
+        user = self.db.login_user(
+            username,
+            password
+        )
 
         if user:
-            self.dashboard = DashboardWindow(self.db, user)
+            self.dashboard = DashboardWindow(
+                self.db,
+                user
+            )
+
             self.dashboard.show()
             self.close()
+
         else:
-            QMessageBox.warning(self, "Ошибка", "Неверный логин или пароль")
+            QMessageBox.warning(
+                self,
+                "Ошибка",
+                "Неверный логин или пароль"
+            )
 
     def open_register(self):
-        self.register = RegisterWindow(self.db)
+        self.register = RegisterWindow(
+            self.db
+        )
+
         self.register.show()
