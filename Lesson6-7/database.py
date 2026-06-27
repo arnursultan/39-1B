@@ -13,7 +13,7 @@ class Database:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
             password TEXT,
-            role TEXT,
+            role TEXT
         )
         """)
 
